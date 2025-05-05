@@ -2,8 +2,7 @@
 
 ---
 
-```markdown
-# 🔐 Data Encryption Web Application
+## 🔐 Data Encryption Web Application
 
 A Python-based web application that provides encryption and decryption services using classical and modern cryptographic algorithms. The application allows users to encrypt messages, decrypt them, and exchange encrypted data securely via a web interface.
 
