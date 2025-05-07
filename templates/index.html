@@ -1,10 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Cryptography Web App</title>
+    <script src="/static/script.js"></script>
 </head>
 <body>
-
+    <h1>Система шифрування даних</h1>
+    <form id="crypto-form" action="/process" method="post">
+        <label>Текст:<br>
+            <textarea name="text" rows="4" cols="50"></textarea>
+        </label><br>
+        <label>Алгоритм:
+            <select name="algorithm" id="algorithm">
+                <option value="caesar">Цезаря</option>
+                <option value="vigenere">Віженера</option>
+                <option value="rsa">RSA</option>
+            </select>
+        </label><br>
+        <div id="key-fields">
+            <label id="caesar-key">Зсув (Цезаря): <input type="number" name="caesar_key" value="3"></label>
+            <label id="vigenere-key" style="display:none;">Ключ (Віженера): <input type="text" name="vigenere_key"></label>
+            <div id="rsa-keys" style="display:none;">
+                <label>p: <input type="number" name="rsa_p"></label>
+                <label>q: <input type="number" name="rsa_q"></label>
+            </div>
+        </div>
+        <label>
+            <input type="radio" name="mode" value="encrypt" checked> Зашифрувати
+            <input type="radio" name="mode" value="decrypt"> Дешифрувати
+        </label><br>
+        <button type="submit">Виконати</button>
+    </form>
+    <div>
+        <h2>Результат:</h2>
+        <pre id="result"></pre>
+    </div>
+    <script>
+        document.getElementById('algorithm').addEventListener('change', function() {
+            document.getElementById('caesar-key').style.display = this.value === 'caesar' ? '' : 'none';
+            document.getElementById('vigenere-key').style.display = this.value === 'vigenere' ? '' : 'none';
+            document.getElementById('rsa-keys').style.display = this.value === 'rsa' ? '' : 'none';
+        });
+    </script>
 </body>
 </html>

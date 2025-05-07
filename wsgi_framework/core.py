@@ -1,30 +1,25 @@
-class App:
-    def __init__(self):
-        self.routes = {"GET": {}, "POST": {}}
+from wsgi_framework.request import Request
 
-    def route(self, path, methods=["GET"]):
+class WSGIApp:
+    def __init__(self):
+        self.routes = {}
+
+    def route(self, path, methods=['GET']):
         def decorator(func):
             for method in methods:
-                self.routes[method.upper()][path] = func
+                self.routes[(path, method)] = func
             return func
         return decorator
 
     def __call__(self, environ, start_response):
-        method = environ["REQUEST_METHOD"]
-        path = environ["PATH_INFO"]
-
-        handler = self.routes.get(method, {}).get(path)
+        request = Request(environ)
+        handler = self.routes.get((request.path, request.method))
         if handler:
-            from .request import parse_request, build_response
-            try:
-                request_data, fmt = parse_request(environ)
-                response_data = handler(request_data)
-                body, headers = build_response(response_data, fmt)
-                start_response("200 OK", headers)
-                return [body]
-            except Exception as e:
-                start_response("400 Bad Request", [("Content-Type", "application/json")])
-                return [f'{{"error": "{str(e)}"}}'.encode()]
+            response = handler(request)
+            status = response.get('status', '200 OK')
+            headers = response.get('headers', [('Content-type', 'text/html; charset=utf-8')])
+            start_response(status, headers)
+            return [response.get('body', b'')]
         else:
-            start_response("404 Not Found", [("Content-Type", "text/plain")])
-            return [b"Not Found"]
+            start_response('404 Not Found', [('Content-type', 'text/plain')])
+            return [b'Not found']
