@@ -6,34 +6,34 @@
     <script src="/static/script.js"></script>
 </head>
 <body>
-    <h1>Система шифрування даних</h1>
+    <h1>Encryption system</h1>
     <form id="crypto-form" action="/process" method="post">
-        <label>Текст:<br>
+        <label>Text:<br>
             <textarea name="text" rows="4" cols="50"></textarea>
         </label><br>
-        <label>Алгоритм:
+        <label>Cipher algorithm:
             <select name="algorithm" id="algorithm">
-                <option value="caesar">Цезаря</option>
-                <option value="vigenere">Віженера</option>
+                <option value="caesar">Caesar</option>
+                <option value="vigenere">Vigenere</option>
                 <option value="rsa">RSA</option>
             </select>
         </label><br>
         <div id="key-fields">
-            <label id="caesar-key">Зсув (Цезаря): <input type="number" name="caesar_key" value="3"></label>
-            <label id="vigenere-key" style="display:none;">Ключ (Віженера): <input type="text" name="vigenere_key"></label>
+            <label id="caesar-key">Caesar key: <input type="number" name="caesar_key" value="3"></label>
+            <label id="vigenere-key" style="display:none;">Vigenere key: <input type="text" name="vigenere_key"></label>
             <div id="rsa-keys" style="display:none;">
                 <label>p: <input type="number" name="rsa_p"></label>
                 <label>q: <input type="number" name="rsa_q"></label>
             </div>
         </div>
         <label>
-            <input type="radio" name="mode" value="encrypt" checked> Зашифрувати
-            <input type="radio" name="mode" value="decrypt"> Дешифрувати
+            <input type="radio" name="mode" value="encrypt" checked> Encrypt
+            <input type="radio" name="mode" value="decrypt"> Decrypt
         </label><br>
-        <button type="submit">Виконати</button>
+        <button type="submit">Execute</button>
     </form>
     <div>
-        <h2>Результат:</h2>
+        <h2>Result:</h2>
         <pre id="result"></pre>
     </div>
     <script>
