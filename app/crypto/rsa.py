@@ -1,11 +1,11 @@
 import random
 
 def egcd(a, b):
-    if a == 0: return (b, 0, 1)
+    if a == 0: return b, 0, 1
     g, y, x = egcd(b % a, a)
-    return (g, x - (b // a) * y, y)
+    return g, x - (b // a) * y, y
 
-def modinv(a, m):
+def modular_inverse(a, m):
     g, x, y = egcd(a, m)
     if g != 1: raise Exception('No modular inverse')
     return x % m
@@ -60,8 +60,8 @@ def rsa_keygen(p, q):
     while egcd(e, phi)[0] != 1:
         e += 2
     
-    d = modinv(e, phi)
-    return (n, e, d)
+    d = modular_inverse(e, phi)
+    return n, e, d
 
 def rsa_encrypt(text, n, e):
     # Split text into chunks that fit within the modulus
@@ -71,7 +71,7 @@ def rsa_encrypt(text, n, e):
     # Encrypt each chunk
     encrypted_chunks = []
     for chunk in chunks:
-        # Convert chunk to bytes and then to a number
+        # Convert a chunk to bytes and then to a number
         message = int.from_bytes(chunk.encode('utf-8'), byteorder='big')
         # Encrypt the chunk
         cipher = pow(message, e, n)

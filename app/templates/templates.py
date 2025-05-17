@@ -135,7 +135,7 @@ def home_page(error=None, key=None):
     """)
 
 def format_file_size(size):
-    """Format file size in bytes to human readable format."""
+    """Format file size in bytes to human-readable format."""
     for unit in ['B', 'KB', 'MB', 'GB']:
         if size < 1024:
             return f"{size:.1f} {unit}"
@@ -168,12 +168,12 @@ def get_file_list():
     except Exception as e:
         return f'<tr><td colspan="4">Error loading files: {html_escape(str(e))}</td></tr>'
 
-def result_page(algo, action, inputtext, key, resulttext):
-    safe_result = html_escape(resulttext)
-    safe_input = html_escape(inputtext)
+def result_page(algo, action, input_text, key, result_text):
+    safe_result = html_escape(result_text)
+    safe_input = html_escape(input_text)
     safe_key = html_escape(key)
-    download_link = f"/download?text={urllib.parse.quote_plus(resulttext)}"
-    save_link = f"/save_result?algo={algo}&action={action}&text={urllib.parse.quote_plus(resulttext)}&key={urllib.parse.quote_plus(key)}"
+    download_link = f"/download?text={urllib.parse.quote_plus(result_text)}"
+    save_link = f"/save_result?algo={algo}&action={action}&text={urllib.parse.quote_plus(result_text)}&key={urllib.parse.quote_plus(key)}"
     
     return html_page(f"""
     <h2>Result ({algo.title()} {action})</h2>

@@ -39,7 +39,7 @@ app.py        # Main application
 1. Make sure you're in the project directory
 2. Run the application:
    ```bash
-   python app.py
+   python main.py
    ```
 3. Open your browser and go to: http://localhost:8000
 

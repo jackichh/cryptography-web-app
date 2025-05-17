@@ -1,9 +1,6 @@
-import base64
-import json
 import os
 import urllib.parse
 from wsgiref.util import setup_testing_defaults
-from app.crypto import caesar, vigenere, rsa
 from app.crypto.caesar import CaesarCipher
 from app.crypto.vigenere import VigenereCipher
 from app.crypto.rsa import *
@@ -50,14 +47,13 @@ def application(environ, start_response):
         key = form.get('key', '').strip()
         action = form.get('action', 'Encrypt')
         
-        # Check for empty inputs and return to home page
+        # Check for empty inputs and return to the home page
         if not text or not key:
             error_msg = "Please enter both text and key"
             response_body = templates.home_page(error=error_msg)
             start_response('200 OK', [('Content-Type', 'text/html')])
             return [response_body.encode('utf-8')]
-            
-        result = ""
+
         try:
             if algo == 'caesar':
                 shift = int(key) if key else 0
