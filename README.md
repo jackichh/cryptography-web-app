@@ -26,7 +26,7 @@ app/
 │   └── form_parser.py
 ├── uploads/         # Uploaded files storage
 └── routes.py        # Main application routes
-app.py        # Main application
+main.py        # Main application
 ```
 
 ## Requirements
