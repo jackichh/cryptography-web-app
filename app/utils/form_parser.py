@@ -43,7 +43,9 @@ def parse_form(environ):
                 if item.startswith("filename="):
                     filename = item.split("=")[1].strip('"')
             if filename:
-                # file upload
+                # Handle uploaded file data
+                # Store file metadata and content in dictionary
+                # Strip trailing multipart form boundary markers
                 form[name] = {"filename": filename, "content": value.rstrip(b"\r\n--")}
             else:
                 form[name] = value.decode("utf-8").rstrip("\r\n")

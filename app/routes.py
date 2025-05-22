@@ -1,3 +1,22 @@
+"""
+Routes module for the encryption web application.
+
+This module handles all the HTTP routes and their corresponding logic for the
+encryption web application. It provides endpoints for encryption/decryption
+using various algorithms, file management, and result sharing.
+
+Routes:
+    - / (GET): Home page
+    - /generate_rsa_key (POST): Generate RSA key pair
+    - /encrypt (POST): Encrypt/decrypt text
+    - /save_result (GET): Save results to file
+    - /share (GET): Share results page
+    - /upload (POST): File upload
+    - /download_file (GET): Download saved file
+    - /delete_file (GET): Delete saved file
+    - /download (GET): Download result
+"""
+
 import os
 import urllib.parse
 from wsgiref.util import setup_testing_defaults
@@ -12,6 +31,21 @@ from datetime import datetime
 UPLOADS_DIR = os.path.join('app', 'uploads')
 
 def application(environ, start_response):
+    """
+    Main WSGI application handler.
+
+    Args:
+        environ: WSGI environment dictionary containing request information
+        start_response: WSGI response starter callable
+        
+    Returns:
+        List containing the response body as bytes
+
+    Error handling:
+        - Returns 404 for unknown paths
+        - Returns 400 for invalid requests
+        - Returns error messages for encryption/decryption failures
+    """
     setup_testing_defaults(environ)
     path = environ.get('PATH_INFO', '/')
     method = environ['REQUEST_METHOD']

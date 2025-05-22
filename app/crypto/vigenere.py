@@ -1,38 +1,94 @@
 class VigenereCipher:
     @staticmethod
-    def encrypt(text, key):
-        result = ""
+    def encrypt(text: str, key: str) -> str:
+        """Encrypt text using Vigenère cipher.
+        
+        Args:
+            text: Text to encrypt
+            key: Encryption key
+            
+        Returns:
+            Encrypted text
+        """
+        if not key:
+            return text
+            
+        # Filter key to only include letters and convert to lowercase
+        key = ''.join(c.lower() for c in key if c.isalpha())
+        if not key:
+            return text
+            
+        result = []
         key_length = len(key)
-        key_as_int = [ord(i.lower()) - ord('a') for i in key]
+        
         for i, char in enumerate(text):
             if char.isalpha():
-                # Determine if character is uppercase or lowercase
-                ascii_offset = ord('A') if char.isupper() else ord('a')
-                # Convert character to 0-25 range
-                char_value = ord(char) - ascii_offset
-                # Apply Vigenere encryption
-                encrypted_value = (char_value + key_as_int[i % key_length]) % 26
-                # Convert back to ASCII and add to result
-                result += chr(encrypted_value + ascii_offset)
+                # Get the key character for this position
+                key_char = key[i % key_length]
+                key_shift = ord(key_char) - ord('a')
+                
+                # Determine if character is uppercase
+                is_upper = char.isupper()
+                char = char.lower()
+                
+                # Apply shift
+                char_value = ord(char) - ord('a')
+                encrypted_value = (char_value + key_shift) % 26
+                encrypted_char = chr(encrypted_value + ord('a'))
+                
+                # Restore case
+                if is_upper:
+                    encrypted_char = encrypted_char.upper()
+                    
+                result.append(encrypted_char)
             else:
-                result += char
-        return result
+                result.append(char)
+                
+        return ''.join(result)
 
     @staticmethod
-    def decrypt(text, key):
-        result = ""
+    def decrypt(text: str, key: str) -> str:
+        """Decrypt text using Vigenère cipher.
+        
+        Args:
+            text: Text to decrypt
+            key: Decryption key
+            
+        Returns:
+            Decrypted text
+        """
+        if not key:
+            return text
+            
+        # Filter key to only include letters and convert to lowercase
+        key = ''.join(c.lower() for c in key if c.isalpha())
+        if not key:
+            return text
+            
+        result = []
         key_length = len(key)
-        key_as_int = [ord(i.lower()) - ord('a') for i in key]
+        
         for i, char in enumerate(text):
             if char.isalpha():
-                # Determine if character is uppercase or lowercase
-                ascii_offset = ord('A') if char.isupper() else ord('a')
-                # Convert character to 0-25 range
-                char_value = ord(char) - ascii_offset
-                # Apply Vigenere decryption
-                decrypted_value = (char_value - key_as_int[i % key_length]) % 26
-                # Convert back to ASCII and add to result
-                result += chr(decrypted_value + ascii_offset)
+                # Get the key character for this position
+                key_char = key[i % key_length]
+                key_shift = ord(key_char) - ord('a')
+                
+                # Determine if character is uppercase
+                is_upper = char.isupper()
+                char = char.lower()
+                
+                # Apply shift
+                char_value = ord(char) - ord('a')
+                decrypted_value = (char_value - key_shift) % 26
+                decrypted_char = chr(decrypted_value + ord('a'))
+                
+                # Restore case
+                if is_upper:
+                    decrypted_char = decrypted_char.upper()
+                    
+                result.append(decrypted_char)
             else:
-                result += char
-        return result
+                result.append(char)
+                
+        return ''.join(result)
