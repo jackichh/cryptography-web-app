@@ -2,12 +2,6 @@ import urllib.parse
 import os
 from datetime import datetime
 
-def html_escape(s):
-    return (s.replace("&", "&amp;")
-             .replace("<", "&lt;")
-             .replace(">", "&gt;")
-             .replace("\"", "&quot;")
-             .replace("'", "&#x27;"))
 
 def html_page(body, title="Data Encryption System"):
     return f"""<!DOCTYPE html>
@@ -68,13 +62,14 @@ def html_page(body, title="Data Encryption System"):
 </body>
 </html>"""
 
+
 def home_page(error=None, key=None):
     file_list = get_file_list()
-    error_html = f'<div style="color: red; margin: 1em 0;">{html_escape(error)}</div>' if error else ''
-    key_html = f'<div class="key-info"><p><strong>Generated Key:</strong> {html_escape(key)}</p></div>' if key else ''
+    error_html = f'<div style="color: red; margin: 1em 0;">{error}</div>' if error else ''
+    key_html = f'<div class="key-info"><p><strong>Generated Key:</strong> {key}</p></div>' if key else ''
     return html_page(f"""
     {error_html}
-    <form method="POST" action="/encrypt" onsubmit="return validateForm()">
+    <form method="POST" action="/encrypt">
         <h2>Encrypt / Decrypt</h2>
         <label>Algorithm:</label>
         <select name="algo" id="algo">
@@ -87,10 +82,10 @@ def home_page(error=None, key=None):
         <textarea name="text" id="text-input" rows="5"></textarea><br><br>
         <div id="key-section">
             <label>Key (for Caesar: shift integer, for Vigenère: string, for RSA: p,q as primes):</label><br>
-            <input type="text" name="key" id="key-input" value="{html_escape(key) if key else ''}">
+            <input type="text" name="key" id="key-input" value="{key if key else ''}">
             <div id="rsa-key-gen">
                 <br>
-                <button type="submit" formaction="/generate_rsa_key">Generate New RSA Key</button>
+                <button type="submit" formaction="/generate_rsa_key" formnovalidate>Generate New RSA Key</button>
             </div>
             {key_html}
         </div>
@@ -116,23 +111,8 @@ def home_page(error=None, key=None):
             {file_list}
         </table>
     </div>
-    <script>
-    function validateForm() {{
-        var text = document.getElementById('text-input').value.trim();
-        var key = document.getElementById('key-input').value.trim();
-        
-        if (!text) {{
-            alert('Please enter some text to encrypt/decrypt');
-            return false;
-        }}
-        if (!key) {{
-            alert('Please enter a key');
-            return false;
-        }}
-        return true;
-    }}
-    </script>
     """)
+
 
 def format_file_size(size):
     """Format file size in bytes to human-readable format."""
@@ -141,6 +121,7 @@ def format_file_size(size):
             return f"{size:.1f} {unit}"
         size /= 1024
     return f"{size:.1f} TB"
+
 
 def get_file_list():
     """Generate HTML for the file list table."""
@@ -155,7 +136,7 @@ def get_file_list():
                 date = datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
                 files.append(f"""
                     <tr>
-                        <td>{html_escape(filename)}</td>
+                        <td>{filename}</td>
                         <td>{size}</td>
                         <td>{date}</td>
                         <td>
@@ -166,27 +147,25 @@ def get_file_list():
                 """)
         return '\n'.join(files) if files else '<tr><td colspan="4">No files uploaded yet</td></tr>'
     except Exception as e:
-        return f'<tr><td colspan="4">Error loading files: {html_escape(str(e))}</td></tr>'
+        return f'<tr><td colspan="4">Error loading files: {str(e)}</td></tr>'
+
 
 def result_page(algo, action, input_text, key, result_text):
-    safe_result = html_escape(result_text)
-    safe_input = html_escape(input_text)
-    safe_key = html_escape(key)
     download_link = f"/download?text={urllib.parse.quote_plus(result_text)}"
     save_link = f"/save_result?algo={algo}&action={action}&text={urllib.parse.quote_plus(result_text)}&key={urllib.parse.quote_plus(key)}"
-    
+
     return html_page(f"""
     <h2>Result ({algo.title()} {action})</h2>
     <div>
         <h3>Input Text</h3>
-        <textarea rows="5" readonly>{safe_input}</textarea>
-        
+        <textarea rows="5" readonly>{input_text}</textarea>
+
         <h3>Key</h3>
-        <input type="text" value="{safe_key}" readonly>
-        
+        <input type="text" value="{key}" readonly>
+
         <h3>Output</h3>
-        <textarea rows="5" readonly>{safe_result}</textarea>
-        
+        <textarea rows="5" readonly>{result_text}</textarea>
+
         <div>
             <a href="{download_link}">Download as Text</a>
             <a href="{download_link}&binary=1">Download as Binary</a>
@@ -195,26 +174,23 @@ def result_page(algo, action, input_text, key, result_text):
     </div>
     """)
 
+
 def upload_result_page(filename, content):
-    safe_filename = html_escape(filename)
-    safe_content = html_escape(content)
     return html_page(f"""
-    <h2>Uploaded File: {safe_filename}</h2>
-    <textarea rows="10" readonly>{safe_content}</textarea>
+    <h2>Uploaded File: {filename}</h2>
+    <textarea rows="10" readonly>{content}</textarea>
     """)
 
+
 def share_page(algo, text, key):
-    safe_text = html_escape(text)
-    safe_key = html_escape(key)
-    
     return html_page(f"""
     <h2>Share {algo.title()} Ciphertext</h2>
     <form method="POST" action="/encrypt">
         <input type="hidden" name="algo" value="{algo}">
         <label>Text:</label><br>
-        <textarea name="text" rows="5">{safe_text}</textarea><br><br>
+        <textarea name="text" rows="5">{text}</textarea><br><br>
         <label>Key:</label><br>
-        <input type="text" name="key" value="{safe_key}"><br><br>
+        <input type="text" name="key" value="{key}"><br><br>
         <div class="button-group">
             <input type="submit" name="action" value="Encrypt">
             <input type="submit" name="action" value="Decrypt">
